@@ -19,7 +19,7 @@ This is why there are 2 buttons for hashing.
 Therefore, when you've choosen a file with "Browse", please press "Submit as File" unless you want the filepath itself to be hashed of course.
 
 # Big Files
-Be aware that big files might cause the program to not respond when hashing. Please sit tight and wait instead of closing the window.
+Please be aware that big files might cause the program to not respond when hashing. Please sit tight and wait instead of closing the window.
 
 # Output to txt
 The button "Output to txt" outputs the results of the hash in a neat txt file in the folder this program is located.
