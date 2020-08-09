@@ -3,12 +3,7 @@ PyHash is a python program to cryptographically hash text and files
 
 Here are some things to be aware of: 
 
-PyHash supports these hash functions: 
-MD5 
-SHA1
-SHA256
-SHA384
-SHA512
+PyHash supports these hash functions: MD5, SHA1, SHA256, SHA384 and SHA512
 
 # Browse
 "Browse" is for when you want to open a file in PyHash from file explorer. When clicking on "Browse" please be aware that both the file and filepath can be hashed.
