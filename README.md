@@ -1,15 +1,16 @@
-# PyHash
-Python program to cryptographically hash text and files
-
-
 # Welcome to PyHash!
-This is a program developt in python to hash text and files.
+PyHash is a python program to cryptographically hash text and files
 
 Here are some things to be aware of: 
 
-PyHash supports these hash functions: MD5, SHA1, SHA256, SHA384 and SHA512
+PyHash supports these hash functions: 
+MD5 
+SHA1
+SHA256
+SHA384
+SHA512
 
-# Browse
+# Browse, Submit as String and Submit as File
 When clicking on "Browse" please be aware that both the file and filepath can be hashed.
 This is why there are 2 buttons for hashing. "Submit as String" means that whatever is typed into the inputfield is taken literally, even filepaths.
 Therefore, when you've choosen a file with "Browse", please press "Submit as File" unless you want the filepath itself to be hashed of course.
