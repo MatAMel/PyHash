@@ -10,9 +10,12 @@ SHA256
 SHA384
 SHA512
 
-# Browse, Submit as String and Submit as File
-When clicking on "Browse" please be aware that both the file and filepath can be hashed.
-This is why there are 2 buttons for hashing. "Submit as String" means that whatever is typed into the inputfield is taken literally, even filepaths.
+# Browse
+"Browse" is for when you want to open a file in PyHash from file explorer. When clicking on "Browse" please be aware that both the file and filepath can be hashed.
+This is why there are 2 buttons for hashing. 
+
+# Submit as String and Submit as File
+"Submit as String" means that whatever is typed into the input-field is taken literally, even filepaths.
 Therefore, when you've choosen a file with "Browse", please press "Submit as File" unless you want the filepath itself to be hashed of course.
 
 # Big Files
