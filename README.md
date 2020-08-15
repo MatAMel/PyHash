@@ -24,3 +24,6 @@ The button "Output to txt" outputs the results of the hash in a neat txt file in
 
 # Copy Hash Results
 On the right of the hash output fields there are copy buttons. These copy whatever is in it's respective field to your clipboard with 1 press.
+
+# Paste
+On the right of the compare hash field there is a paste button. This button pastes whatever you have on your clipboard to that field.
