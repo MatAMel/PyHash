@@ -1,8 +1,7 @@
-# Welcome to PyHash!
+# PyHash
 PyHash is a python program to cryptographically hash text and files
 
-Here are some things to be aware of: 
-
+# Supported hash functions 
 PyHash supports these hash functions: MD5, SHA1, SHA256, SHA384 and SHA512
 
 # Browse
