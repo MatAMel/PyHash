@@ -13,7 +13,7 @@ This is why there are 2 buttons for hashing.
 Therefore, when you've choosen a file with "Browse", please press "Submit as File" unless you want the filepath itself to be hashed of course.
 
 # Big Files
-Big files may take som time to hash. There is a loading bar on files >50MB.
+Big files may take som time to hash. There is a loading bar.
 
 # Output to txt
 The button "Output to txt" outputs the results of the hash in a text file called "HashExport.txt" in the folder where this program is located.
