@@ -1,40 +1,45 @@
-#Make Error log output
-#Improve Theme changer
-#Save settings (Themes) after restart
-#Have history of inputs
-#Add Paste button to compare hash inputfield
 #Better support for large files (slow currently)
 #Make strings automatically update when typing
 #Make outputs available in Uppercase letters
 
-##Added loading bar when hashing files with cancel button
-##Added comments to code
-##Changed copy button from icon to say "Copy"
-##Added main() function
-##Added Ability to change theme
-##Reworded about page
-##"Hash Succeeded" popup will stay on top of main window until you close it
-##Added an icon to "Hash succeeded" popup
-##Added Menubar with button to open Github page, About and settings
-##Added filesize check for big files when hashing
-##Added filesize field in output to txt with the size of the file in MB
-##Added autoclear when submitting as file. Because the old hash would stay when hashing new file, which could be confusing.
-##Removed unnecessary clutter in code
+
+"""
+Changed block size from 1024 to 65536 (Loading more of the file in RAM, but makes hashing quicker)
+Changed themechanger. You can now scroll through available themes and get a preview of the theme. You just select the theme and you don't need to type anything.
+Removed Theme Names context menu
+Ability to save themes for after restart
+Creates a settings file in same directory with settings you change
+Added history file which saves all inputs both file and string in a txt file. You can clear it when you want
+Added Paste function to compare hash field
+Stopped realeasing as a single .exe file. Now in a .zip folder
+"""
 
 
 import PySimpleGUI as sg
 import hashlib
-from os import stat
 import os
+from os import stat
 from pyperclip import copy, paste
 from webbrowser import open as openwebpage
+from pathlib import Path
+from datetime import datetime
+
+
+#Checks if the directory PyHash_Settings exists. If not create it
+if not os.path.isdir("PyHash_Settings"):
+    os.mkdir("PyHash_Settings")
+#Create a settings file if it doesnt exist
+if not os.path.isfile("pyhash_theme_settings.txt"):
+    themeNameRead = open("pyhash_theme_settings.txt", "w")
+    themeNameRead.close()
+
+#Reads the contents of the file and assign it the variable newTheme
+newTheme = Path("pyhash_theme_settings.txt").read_text()
 
 
 def main():
-
-
     #Create a menubar
-    menuBar = [["File", ["Theme", ["Theme Names", "Change Theme"]]],
+    menuBar = [["File", ["Theme", ["Change Theme", "Save Theme", "Reset Theme"], ["History", ["Open History File", "Clear History"]]]],
                     ["Help", ["About", "Github"]]]
     
 
@@ -45,7 +50,7 @@ def main():
         [sg.Text("Original String/File", size=(13, 1)), sg.InputText(key="InputText"), sg.FileBrowse("Browse")],
         [sg.Text("Loading Bar Files", size=(13, 1)), sg.ProgressBar(6, orientation='h', size=(29, 20), key='progressbar', bar_color=("green", "white")), sg.Button("Cancel")],
         [sg.Text("\n")],
-        [sg.Text("Compare Hash", size=(13, 1)), sg.InputText(key="CheckHash")],
+        [sg.Text("Compare Hash", size=(13, 1)), sg.InputText(key="CheckHash"), sg.Button("Paste")],
         [sg.Text("\n")],
         [sg.Text("MD5", size=(13, 1)), sg.InputText(key="MD5"), sg.Button("Copy", key=("md5Copy"))],
         [sg.Text("SHA1", size=(13, 1)), sg.InputText(key="SHA1"), sg.Button("Copy", key=("sha1Copy"))], 
@@ -56,7 +61,7 @@ def main():
         [sg.Submit("Submit as String"), sg.Submit("Submit as File"), sg.Button("Compare Hash"), sg.Button("Output to txt"), sg.Button("Clear")]
     ] 
 
-    
+
     #Create Window
     window = sg.Window("PyHash", layout, icon="D:\Documents\Python Scripts\PyHash\icon.ico")
     progress_bar = window['progressbar']
@@ -93,7 +98,7 @@ def main():
         h = hashlib.md5()
         with open(File_to_Hash, 'rb') as file:
             while True:
-                chunk = file.read(1024)
+                chunk = file.read(65536)
                 if not chunk:
                     break
                 h.update(chunk)
@@ -103,7 +108,7 @@ def main():
         h = hashlib.sha1()
         with open(File_to_Hash, 'rb') as file:
             while True:
-                chunk = file.read(1024)
+                chunk = file.read(65536)
                 if not chunk:
                     break
                 h.update(chunk)
@@ -113,7 +118,7 @@ def main():
         h = hashlib.sha256()
         with open(File_to_Hash, 'rb') as file:
             while True:
-                chunk = file.read(1024)
+                chunk = file.read(65536)
                 if not chunk:
                     break
                 h.update(chunk)
@@ -123,7 +128,7 @@ def main():
         h = hashlib.sha384()
         with open(File_to_Hash, 'rb') as file:
             while True:
-                chunk = file.read(1024)
+                chunk = file.read(65536)
                 if not chunk:
                     break
                 h.update(chunk)
@@ -133,7 +138,7 @@ def main():
         h = hashlib.sha512()
         with open(File_to_Hash, 'rb') as file:
             while True:
-                chunk = file.read(1024)
+                chunk = file.read(65536)
                 if not chunk:
                     break
                 h.update(chunk)
@@ -180,6 +185,11 @@ def main():
         if event == sg.WINDOW_CLOSED or event == "Exit":
             break
 
+        
+        #Paste whatever is on the clipboard to the checkhash field
+        if event == "Paste":
+            window.FindElement("CheckHash").update(paste())
+
 
         #Copy text from specified fields to clipboard
         if event == "md5Copy":
@@ -194,6 +204,10 @@ def main():
             copy(values["SHA512"])
 
 
+        #Get the current date and time without milliseconds
+        now = datetime.now().replace(microsecond=0)
+
+
         #Submits the text in "Submit as String" and checks if it exits. If it extist, hash it and return results in the corresponding text box
         if event == "Submit as String":
             progress_bar.UpdateBar(0)
@@ -202,6 +216,9 @@ def main():
             window["SHA256"].update(sha256(values["InputText"]))
             window["SHA384"].update(sha384(values["InputText"]))
             window["SHA512"].update(sha512(values["InputText"]))
+            history = open("pyhash_history_settings.txt", "a")
+            history.write("(" + str(now) + ") (String): " + str(values["InputText"]) + "\n")
+            history.close()
 
 
         #Submits a file for hashing. It checks if the file is larger than 40 MB. If it is show a warning which tells the user that the hashing may take some time.
@@ -212,23 +229,19 @@ def main():
                 window.FindElement("SHA1").update("")
                 window.FindElement("SHA256").update("")
                 window.FindElement("SHA384").update("")
-                window.FindElement("SHA512").update("")             
-                try:
-                    submitAsFile()
-                except Exception:
-                    sg.popup_timed("ERROR!\nYou exited the hashing process before it was finished\nRESTARTING...", auto_close_duration=3, title="Error", background_color="Red", font=(18), modal=True, icon="D:\Documents\Python Scripts\PyHash\error.ico")
-                    window.close()
-                    main()
-
+                window.FindElement("SHA512").update("")
+                if os.path.isfile(values["InputText"]):             
+                    history = open("pyhash_history_settings.txt", "a")
+                    history.write("(" + str(now) + ") (File)  : " + str(values["InputText"]) + "\n")
+                    history.close()
+                submitAsFile()
             except Exception:
+                progress_bar.UpdateBar(0)
                 sg.popup("ERROR!\nYou didn't select a valid file or filepath", title="Error", background_color="Red", font=(18), modal=True, icon="D:\Documents\Python Scripts\PyHash\error.ico")
 
 
         #Outputs the results in a txt file in the folder where this application is located
         if event == "Output to txt":
-            if os.path.exists("HashExport.txt"):
-                os.remove("HashExport.txt")
-
             file = open("HashExport.txt", "w")
             if checkSize(values["InputText"]) == None:
                 file.write("Original String/File: " + values["InputText"] + "\n\n" +
@@ -274,25 +287,60 @@ def main():
             clearFields()
 
 
-        #Change theme. You input the name of the theme and it restarts the window with the new theme
+        #Change Theme. You select a theme and it shows a preview. There you can choose Ok or Cancel
         if event == "Change Theme":
-            changeTheme = sg.popup_get_text("The names of themes are in \"File\"->\"Theme Names\"\nPlease input the name of theme (NOT case-sensitive): ", title="Theme", icon="D:\Documents\Python Scripts\PyHash\icon.ico")
-            themes = [i.lower() for i in sg.theme_list()]
-            try:
-                if changeTheme.lower() in themes:
-                    window.Close()
-                    sg.theme(changeTheme)
+            window.close()
+            layout1 = [[sg.Listbox(values = sg.theme_list(), 
+                size =(30, 20), 
+                key ="list", 
+                enable_events = True)]
+                ]
+
+            window = sg.Window("Theme List", layout1, icon="D:\Documents\Python Scripts\PyHash\icon.ico") 
+            while True:
+                event, values = window.read() 
+                if event in (None, "Exit"):
+                    break 
+                    # window.close()
+                    # main()
+                sg.theme(values["list"][0]) 
+                if sg.popup_get_text('This is ' + values['list'][0]) == "":
+                    window.close()
+                    sg.theme(values["list"][0])             
                     main()
-                else:
-                    sg.popup("ERROR\nIncorrect spelling or unavailable theme")
-            except AttributeError:
+
+
+        #Save the theme to settings file
+        if event == "Save Theme":
+            if sg.theme() == "DarkBlue3":
+                sg.popup("You already have the default theme!", title="Save Theme", icon="D:\Documents\Python Scripts\PyHash\icon.ico")
+            elif sg.theme() != "DarkBlue3":
+                saveTheme = open("pyhash_theme_settings.txt", "w")
+                saveTheme.write(sg.theme())
+                saveTheme.close() 
+
+
+        #Reset the theme back to DarkBlue3
+        if event == "Reset Theme":
+            if sg.theme() == "DarkBlue3":
+                sg.popup("You already have the default theme!", title="Reset Theme", icon="D:\Documents\Python Scripts\PyHash\icon.ico")
+            elif sg.theme() != "DarkBlue3":
                 window.close()
+                sg.theme("DarkBlue3")
+                resetTheme = open("pyhash_theme_settings.txt", "w")
+                resetTheme.write("DarkBlue3")
+                resetTheme.close()
                 main()
 
 
-        #Opens a webpage with the themenames
-        if event == "Theme Names":
-            openwebpage("https://raw.githubusercontent.com/MatAMel/PyHash/master/themes.jpg")
+        #Opens the history file in a window
+        if event == "Open History File":
+            os.startfile("pyhash_history_settings.txt")
+
+
+        #Clears history file
+        if event == "Clear History":
+            open("pyhash_history_settings.txt", 'w').close()
 
 
         #Opens this applications github page
@@ -324,5 +372,12 @@ def main():
     window.close()
 
 
+if newTheme == "":
+    newTheme = "DarkBlue3"
+
+
 if __name__ == "__main__":
+    sg.theme(newTheme)
     main()
+
+
